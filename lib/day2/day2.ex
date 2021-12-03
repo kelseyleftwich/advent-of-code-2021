@@ -2,10 +2,11 @@ defmodule Day2 do
   def part_1(path) do
     path
     |> FileReader.get_lines()
-    |> Enum.reduce({0, 0}, fn line, {depth, horizontal} ->
+    |> Enum.reduce({0, 0, 0}, fn line, {depth, horizontal, aim} ->
       line
-      |> parse_line({depth, horizontal})
+      |> parse_line({depth, horizontal, aim})
     end)
+    |> Tuple.delete_at(2)
     |> Tuple.product()
   end
 
@@ -15,15 +16,17 @@ defmodule Day2 do
     parse_line([direction, units], location)
   end
 
-  def parse_line(["forward", units], {depth, horizontal}) do
-    {depth, horizontal + units}
+  # It increases your horizontal position by X units.
+  # It increases your depth by your aim multiplied by X.
+  def parse_line(["forward", units], {depth, horizontal, aim}) do
+    {depth + aim * units, horizontal + units, aim}
   end
 
-  def parse_line(["down", units], {depth, horizontal}) do
-    {depth + units, horizontal}
+  def parse_line(["down", units], {depth, horizontal, aim}) do
+    {depth, horizontal, aim + units}
   end
 
-  def parse_line(["up", units], {depth, horizontal}) do
-    {depth - units, horizontal}
+  def parse_line(["up", units], {depth, horizontal, aim}) do
+    {depth, horizontal, aim - units}
   end
 end
